@@ -221,7 +221,7 @@
     status('CONNECTING', false);
     try {
       // Binance USDⓈ-M Futures public all-market liquidation stream.
-      ws = new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");
+      ws = new WebSocket("wss://fstream.binance.com/market/stream?streams=!forceOrder@arr");
     } catch (e) {
       status('ERROR', false); timer = setTimeout(connect, 3000); return;
     }
