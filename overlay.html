@@ -221,12 +221,18 @@
     status('CONNECTING', false);
     try {
       // Binance USDⓈ-M Futures public all-market liquidation stream.
-      ws = new WebSocket("wss://fstream.binance.com/market/stream?streams=!forceOrder@arr");
+      const WS_URL ="wss://fstream.binance.com/market/stream?streams=!forceOrder@arr";
+
+    ws = new WebSocket(WS_URL);
     } catch (e) {
       status('ERROR', false); timer = setTimeout(connect, 3000); return;
     }
 
-    ws.onopen = () => { retry = 0; status('LIVE', true); };
+    ws.onopen = () => {
+    retry = 0;
+    status('LIVE', true);
+    console.log('BINANCE WS CONNECTED');
+    };
     ws.onmessage = ev => {
       try {
         const packet = JSON.parse(ev.data);
@@ -250,11 +256,28 @@
         render();
       } catch (e) {}
     };
-    ws.onerror = () => { status('RECONNECTING', false); try { ws.close(); } catch(e){} };
-    ws.onclose = () => {
-      status('RECONNECTING', false);
-      retry = Math.min(retry + 1, 6);
-      timer = setTimeout(connect, Math.min(3000 * retry, 15000));
+    ws.onerror = (error) => {
+    console.error('BINANCE WS ERROR:', error);
+    status('WS ERROR', false);
+
+    try {
+        ws.close();
+    } catch(e) {}
+    };
+    ws.onclose = (event) => {
+    console.log(
+        'BINANCE WS CLOSED:',
+        event.code,
+        event.reason
+    );
+
+    status('RECONNECTING', false);
+
+    retry = Math.min(retry + 1, 6);
+    timer = setTimeout(
+        connect,
+        Math.min(3000 * retry, 15000)
+    );
     };
   }
 
