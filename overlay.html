@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Akademi Crypto — Live Overlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="overlay-body">
+
+<div class="canvas">
+
+  <!-- SOLID BACKGROUND FRAME. Together these four rectangles cover the
+       entire canvas EXCEPT the video-hole rectangle below — see the
+       diagram in assets/style.css. Do not resize/move these without
+       recomputing against the video-hole's left/top/width/height. -->
+  <div class="bg bg-top"></div>
+  <div class="bg bg-bottom"></div>
+  <div class="bg bg-left"></div>
+  <div class="bg bg-right"></div>
+
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">∀</div>
+      <div>
+        <div class="brand-name">AKADEMI <span>CRYPTO</span></div>
+        <div class="brand-sub">LEARN • ANALYZE • TRADE • EARN</div>
+      </div>
+    </div>
+
+    <div class="replay">
+      <span class="live-dot"></span>
+      <div><b>LIVE REPLAY</b><small>MARKET NEWS • MACRO • CRYPTO</small></div>
+    </div>
+
+    <div class="motto">DISCIPLINE. STRATEGY. FREEDOM.</div>
+
+    <div class="clock">
+      <b id="clock">--:--:--</b>
+      <small id="date">--</small>
+    </div>
+  </header>
+
+  <!-- TRANSPARENT VIDEO WINDOW -->
+  <section class="video-hole">
+    <div class="video-label"><span></span> Titik Kumpul</div>
+  </section>
+
+  <!-- RIGHT: NEWS -->
+  <section class="panel news">
+    <div class="panel-head">
+      <b>TOP STORIES</b><span>MARKET NEWS</span>
+    </div>
+    <div class="panel-body">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+        {
+          "displayMode":"compact",
+          "feedMode":"all_symbols",
+          "colorTheme":"dark",
+          "isTransparent":false,
+          "locale":"en",
+          "width":"100%",
+          "height":"100%"
+        }
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: ECONOMIC CALENDAR -->
+  <section class="panel calendar">
+    <div class="panel-head">
+      <b>ECONOMIC CALENDAR</b><span>MACRO EVENTS</span>
+    </div>
+    <div class="panel-body">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+        {
+          "colorTheme":"dark",
+          "isTransparent":false,
+          "locale":"en",
+          "countryFilter":"ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu",
+          "importanceFilter":"0,1",
+          "width":"100%",
+          "height":"100%"
+        }
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOWER LEFT: TECHNICAL ANALYSIS -->
+  <section class="panel technical">
+    <div class="panel-head">
+      <b>BTC TECHNICAL ANALYSIS</b><span>BINANCE:BTCUSDT</span>
+    </div>
+    <div class="technical-body">
+      <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-technical-analysis.js"></script>
+      <tv-technical-analysis symbol="BINANCE:BTCUSDT" interval="1w" theme="dark"></tv-technical-analysis>
+    </div>
+  </section>
+
+  <!-- LOWER CENTER: FUTURES LIQUIDATIONS -->
+  <section class="panel snapshot liquidation-panel">
+    <div class="panel-head">
+      <b>FUTURES MARKET</b><span>LIQUIDATIONS • BINANCE</span>
+    </div>
+    <div class="liquidation-body">
+      <div class="liq-top">
+        <div>
+          <small>LIQUIDATIONS 1H</small>
+          <strong id="liqTotal">$0</strong>
+        </div>
+        <div class="liq-status"><i id="liqDot"></i><span id="liqStatus">CONNECTING</span></div>
+      </div>
+
+      <div class="liq-split">
+        <div class="liq-side">
+          <div class="liq-side-head"><span>LONG</span><b id="longPct">0%</b></div>
+          <div class="liq-track"><i id="longBar"></i></div>
+          <strong id="longVal">$0</strong>
+        </div>
+        <div class="liq-side">
+          <div class="liq-side-head"><span>SHORT</span><b id="shortPct">0%</b></div>
+          <div class="liq-track"><i id="shortBar"></i></div>
+          <strong id="shortVal">$0</strong>
+        </div>
+      </div>
+
+      <div class="liq-divider"></div>
+      <div class="liq-subhead"><b>LATEST LIQUIDATIONS</b><span>REAL-TIME</span></div>
+      <div id="liqFeed" class="liq-feed"><div class="liq-empty">Waiting for liquidation events...</div></div>
+      <div class="liq-foot">Binance USDⓈ-M Futures • rolling 1 hour</div>
+    </div>
+  </section>
+
+  <!-- FOOTER TICKER -->
+  <footer class="ticker">
+    <div class="ticker-title">MARKET TICKER</div>
+    <div class="ticker-widget">
+      <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
+      <tv-ticker-tape symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,NASDAQ:TSLA,BINANCEUS:HYPEUSDT" theme="dark"></tv-ticker-tape>
+    </div>
+  </footer>
+
+  <div class="source">MARKET DATA &amp; NEWS BY TRADINGVIEW</div>
+</div>
+
+<script>
+(function(){
+  function pad(n){return String(n).padStart(2,'0')}
+  function update(){
+    const d=new Date();
+    document.getElementById('clock').textContent =
+      pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+    document.getElementById('date').textContent =
+      d.toLocaleDateString('id-ID',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+  }
+  update(); setInterval(update,1000);
+})();
+</script>
+
+<script>
+(function () {
+  const events = [];
+  const WINDOW = 60 * 60 * 1000;
+  let ws = null, retry = 0, timer = null;
+
+  const $ = id => document.getElementById(id);
+  const money = n => {
+    if (!Number.isFinite(n) || n <= 0) return '$0';
+    if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+    return '$' + n.toFixed(0);
+  };
+
+  function status(text, live) {
+    $('liqStatus').textContent = text;
+    $('liqDot').classList.toggle('online', !!live);
+  }
+
+  function render() {
+    const now = Date.now();
+    while (events.length && now - events[0].time > WINDOW) events.shift();
+
+    let long = 0, short = 0;
+    for (const x of events) x.side === 'LONG' ? long += x.value : short += x.value;
+    const total = long + short;
+    const lp = total ? long / total * 100 : 0;
+    const sp = total ? short / total * 100 : 0;
+
+    $('liqTotal').textContent = money(total);
+    $('longVal').textContent = money(long);
+    $('shortVal').textContent = money(short);
+    $('longPct').textContent = lp.toFixed(0) + '%';
+    $('shortPct').textContent = sp.toFixed(0) + '%';
+    $('longBar').style.width = lp + '%';
+    $('shortBar').style.width = sp + '%';
+
+    const feed = $('liqFeed');
+    if (!events.length) {
+      feed.innerHTML = '<div class="liq-empty">No liquidation events in the last hour.</div>';
+      return;
+    }
+    feed.innerHTML = events.slice(-6).reverse().map(x => {
+      const coin = x.symbol.replace(/USDT$|USDC$|BUSD$/,'');
+      const t = new Date(x.time).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      return '<div class="liq-event"><b class="coin">'+coin+'</b><span class="'+x.side.toLowerCase()+'">'+x.side+'</span><strong>'+money(x.value)+'</strong><small>'+t+'</small></div>';
+    }).join('');
+  }
+
+  function connect() {
+    clearTimeout(timer);
+    status('CONNECTING', false);
+    try {
+      // Binance USDⓈ-M Futures public all-market liquidation stream.
+      ws = new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");
+    } catch (e) {
+      status('ERROR', false); timer = setTimeout(connect, 3000); return;
+    }
+
+    ws.onopen = () => { retry = 0; status('LIVE', true); };
+    ws.onmessage = ev => {
+      try {
+        const packet = JSON.parse(ev.data);
+        // Supports both raw and combined-stream payloads.
+        const d = packet.data || packet;
+        const o = d.o;
+        if (!o || d.e !== 'forceOrder') return;
+
+        const qty = Number(o.z || o.q || 0); // accumulated/ordered quantity
+        const price = Number(o.ap || o.p || 0);
+        const value = qty * price;
+        if (!Number.isFinite(value) || value <= 0) return;
+
+        events.push({
+          symbol: String(o.s || ''),
+          // SELL liquidation closes a LONG; BUY liquidation closes a SHORT.
+          side: o.S === 'SELL' ? 'LONG' : 'SHORT',
+          value,
+          time: Number(o.T || d.E || Date.now())
+        });
+        render();
+      } catch (e) {}
+    };
+    ws.onerror = () => { status('RECONNECTING', false); try { ws.close(); } catch(e){} };
+    ws.onclose = () => {
+      status('RECONNECTING', false);
+      retry = Math.min(retry + 1, 6);
+      timer = setTimeout(connect, Math.min(3000 * retry, 15000));
+    };
+  }
+
+  render();
+  connect();
+  setInterval(render, 5000);
+})();
+</script>
+</body>
+</html>

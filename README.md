@@ -1,82 +1,49 @@
-# Akademi Crypto — Ready Overlay System
+# Akademi Crypto Overlay V3
 
-Versi ini sengaja dibuat sebagai SISTEM WIDGET, bukan satu overlay 1920x1080.
+## Layout
+Fixed 1920×1080 canvas.
 
-## Struktur
+### Transparent area
+Only the `VIDEO TIMOTHY / SOURCE AREA` rectangle is transparent:
+`left: 20px · top: 112px · width: 1065px · height: 410px` (so it spans x:20–1085, y:112–522).
 
-- `index.html` = halaman preview / dokumentasi.
-- `widget.html?widget=header` = widget header.
-- `widget.html?widget=topic` = widget topic.
-- `widget.html?widget=summary` = widget summary.
-- `widget.html?widget=market` = market realtime.
-- `widget.html?widget=ticker` = ticker realtime.
-- `widget.html?widget=brand` = branding.
-- `assets/config.js` = konfigurasi.
-- `assets/data.js` = data manual yang nanti diganti otomatis oleh n8n/API.
-- `assets/market.js` = adapter market realtime.
-- `assets/widget.js` = renderer.
-- `assets/app.css` = seluruh styling.
-- `data/episode.json` = contoh format data episode untuk tahap automation.
+If Timothy's camera source in TikTok LIVE Studio was already sized/positioned to match the old window (height 378px), resize it to the new height (410px) at the same left/top so it still lines up exactly.
 
-## Cara tes lokal
+### Solid areas
+Everything else — header, right-side news/calendar, lower technical/snapshot panels, and the ticker — sits on **one gap-free solid frame** made of exactly four rectangles built around the video window (see the diagram at the top of `assets/style.css`). This was fixed in V3: the previous version left a few thin unintended transparent seams (a sliver at the far left edge, a seam between the snapshot and calendar panels, and a band above the ticker) where the raw stream could bleed through. If you ever resize or move the video window, recompute these four rectangles against its new `left/top/width/height` — that's the one thing in this file that has to stay mathematically exact.
 
-Buka `index.html` di Chrome.
+This is intentional so the overlay can be placed above a separate video source in TikTok LIVE Studio.
 
-Untuk widget, buka:
-`widget.html?widget=topic`
-`widget.html?widget=summary`
-`widget.html?widget=market`
+## Important: enable transparency on the browser source
+CSS transparency only works if the **browser source itself is set to transparent background** in TikTok LIVE Studio (or OBS). If that option is off, the whole canvas renders as a solid rectangle regardless of the CSS. Add Timothy's camera as a separate source *underneath* the overlay source.
 
-Market realtime membutuhkan koneksi internet karena memakai Binance public WebSocket.
+## Main URL
+`/overlay.html`
 
-## Cara pakai setelah deploy
+## Individual widgets
+- `/ticker.html`
+- `/news.html`
+- `/calendar.html`
+- `/technical.html`
 
-Misalnya domain:
-`https://dashboard-kamu.example`
+Each of these stays deliberately lightweight (no webfont, single widget) in case you want to use them as separate browser sources instead of the combined overlay.
 
-Masukkan sebagai Link/Web Source secara terpisah:
+## What changed in V3.1
+- **Closed the dead space above the footer ticker.** The lower row (technical/snapshot/calendar) and the video/news row were both stretched a bit taller, and the ticker was made taller too — together they now use the full 1080px height with no leftover empty band.
+- **Fixed the clipped ticker prices.** The footer ticker grew from 55px to 90px tall so the TradingView ticker tape has room to show the price/change line instead of getting cut off.
+- Moved the small "AKADEMI CRYPTO" watermark out of the ticker's new footprint (it now sits in the bottom margin strip next to the TradingView credit, instead of overlapping the taller ticker).
 
-`https://dashboard-kamu.example/widget.html?widget=header`
+## What changed in V3
+- **Fixed the transparency bug** — rebuilt the background as four precisely-computed rectangles around the video hole instead of four ad-hoc ones, so nothing outside the video window can ever show through.
+- **Unified the visual language** — colors, borders, and shadows now come from a small set of CSS variables in `assets/style.css` instead of a dozen slightly different hand-picked golds/browns.
+- **Loaded the Inter webfont properly** — the old version referenced Inter without loading it, so it silently fell back to Arial on most machines. `overlay.html` and `index.html` now load it from Google Fonts.
+- **Market Snapshot is now live data** — the six cells used to be static labels (BTC, ETH, GOLD…) with no real numbers. They're now a real TradingView Tickers widget showing live price + % change for BTC, ETH, Gold, S&P 500, Nasdaq, and DXY, in the same visual language as the rest of the overlay.
+- Small polish pass on the header, panel headers, and spacing.
 
-`https://dashboard-kamu.example/widget.html?widget=topic`
+## Preview
+Open `/index.html` for a simple preview page. The actual `/overlay.html` uses transparency in the video window — a transparent HTML canvas may appear differently depending on the browser/background used for preview; this does not change the CSS transparency of the video window.
 
-`https://dashboard-kamu.example/widget.html?widget=summary`
+## Deployment
+Static files only. No Node.js, database, API key, or n8n is required.
 
-`https://dashboard-kamu.example/widget.html?widget=market`
-
-`https://dashboard-kamu.example/widget.html?widget=ticker`
-
-`https://dashboard-kamu.example/widget.html?widget=brand`
-
-Atur posisi dan ukuran masing-masing source langsung di TikTok LIVE Studio.
-
-## Automation berikutnya
-
-Data manual saat ini:
-`assets/data.js`
-
-Nanti bisa diganti menjadi:
-n8n -> endpoint JSON -> fetch() -> dashboard.
-
-Contoh data:
-{
-  "topic": {
-    "current": "...",
-    "subtitle": "...",
-    "next": "...",
-    "chapter": "...",
-    "progress": 50
-  },
-  "summary": {
-    "title": "RINGKASAN",
-    "text": "..."
-  }
-}
-
-Gemini nantinya bertugas membuat chapter + summary dari video/episode. n8n mengubah hasil Gemini menjadi JSON terstruktur.
-
-## Catatan market
-
-Market memakai Binance public WebSocket tanpa API key. Ini hanya untuk data publik, bukan trading.
-
-Jika provider diganti, cukup ubah `assets/market.js`. Jangan menaruh API secret/private key di frontend.
+Upload this folder to GitHub Pages/Cloudflare Pages/another static host and use the public `/overlay.html` URL as a browser source in TikTok LIVE Studio.
