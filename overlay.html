@@ -221,7 +221,7 @@
     status('CONNECTING', false);
     try {
       // Binance USDⓈ-M Futures public all-market liquidation stream.
-      const WS_URL ="wss://ac-liquidations-data.ravanahmadsyajani.workers.dev/";
+      const WS_URL ="wss://ac-liqdata.onrender.com/liq";
 
     ws = new WebSocket(WS_URL);
     } catch (e) {
@@ -284,6 +284,13 @@
   render();
   connect();
   setInterval(render, 5000);
+  setInterval(() => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: "ping"
+    }));
+  }
+}, 20000);
 })();
 </script>
 </body>
