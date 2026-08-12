@@ -221,7 +221,7 @@
     status('CONNECTING', false);
     try {
       // Binance USDⓈ-M Futures public all-market liquidation stream.
-      const WS_URL ="wss://fstream.binance.com/market/stream?streams=!forceOrder@arr";
+      const WS_URL ="wss://ac-liquidations-data.ravanahmadsyajani.workers.dev/";
 
     ws = new WebSocket(WS_URL);
     } catch (e) {
